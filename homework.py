@@ -72,7 +72,7 @@ def get_api_answer(timestamp):
     try:
         return response.json()
     except json.JSONDecodeError as json_error:
-        raise APIError('Ошибка при преобразовании ответа в JSON:, ' 
+        raise APIError('Ошибка при преобразовании ответа в JSON:, '
                        f'{json_error}')
 
 
