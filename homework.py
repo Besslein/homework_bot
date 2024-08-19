@@ -91,7 +91,7 @@ def check_response(response):
     if 'current_date' not in response or response['current_date'] != current_date:
         raise ValueError('Ответ API содержит неверную текущую дату.'
                          f'Ожидаемая дата: {current_date},'
-                         f'Полученная дата: {response.get("current_date, "None")}')
+                         f'Полученная дата: {response.get("current_date", "None")}')
     logging.info('Проверка ответа API прошла успешно!')
 
 
