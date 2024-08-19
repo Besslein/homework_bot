@@ -72,21 +72,22 @@ def get_api_answer(timestamp):
     try:
         return response.json()
     except json.JSONDecodeError as json_error:
-        raise APIError(f'Ошибка при преобразовании ответа в JSON: {json_error}')
+        raise APIError('Ошибка при преобразовании ответа в JSON:, ' 
+                       f'{json_error}')
 
 
-def check_response(response): 
-    """Проверка ответа от API.""" 
-    logging.info('Начало проверки ответа API') 
-    if not isinstance(response, dict): 
-        raise TypeError('Ответ API не является "dict". ' 
-                        f'Ответ API является {type(response)}') 
-    if 'homeworks' not in response: 
-        raise KeyError('Ответ API не содержит список проектов "homeworks"') 
-    if not isinstance(response.get('homeworks'), list): 
-        raise TypeError('Список проектов не является "list". ' 
-                        'Список проектов является ' 
-                        f'{type(response.get("homeworks"))}') 
+def check_response(response):
+    """Проверка ответа от API."""
+    logging.info('Начало проверки ответа API')
+    if not isinstance(response, dict):
+        raise TypeError('Ответ API не является "dict". '
+                        f'Ответ API является {type(response)}')
+    if 'homeworks' not in response:
+        raise KeyError('Ответ API не содержит список проектов "homeworks"')
+    if not isinstance(response.get('homeworks'), list):
+        raise TypeError('Список проектов не является "list". '
+                        'Список проектов является '
+                        f'{type(response.get("homeworks"))}')
     logging.info('Проверка ответа API прошла успешно!')
 
 
