@@ -8,6 +8,7 @@ from http import HTTPStatus
 import requests
 import telebot
 from dotenv import load_dotenv
+from datetime import datetime
 
 from exceptions import APIError, TokenNotFound
 
@@ -49,8 +50,11 @@ def check_tokens():
 def send_message(bot, message):
     """Отправка сообщения в чат."""
     logging.info('Начало отправки сообщения в чат')
-    bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
-    logging.debug('Сообщение отправлено')
+    try:
+        bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message)
+        logging.debug('Сообщение отправлено')
+    except Exception as error:
+        logging.error(f'Ошибка при отправка сообщения: {error}')
 
 
 def get_api_answer(timestamp):
@@ -65,7 +69,11 @@ def get_api_answer(timestamp):
         raise APIError(f'Статус запроса к API: {response.status_code}')
     logging.info('Запрос к API прошёл успешно!')
 
-    return response.json()
+    try:
+        return response.json()
+    except json.JSONDecodeError as json_error:
+        raise APIError(f'Ошибка при преобразовании ответа в JSON: 
+                       {json_error}')
 
 
 def check_response(response):
@@ -74,12 +82,17 @@ def check_response(response):
     if not isinstance(response, dict):
         raise TypeError('Ответ API не является "dict". '
                         f'Ответ API является {type(response)}')
-    if 'homeworks' not in response:
-        raise KeyError('Ответ API не содержит список проектов "homeworks"')
-    if not isinstance(response.get('homeworks'), list):
+    if 'projects' not in response:
+        raise KeyError('Ответ API не содержит список проектов "projects"')
+    if not isinstance(response.get('projects'), list):
         raise TypeError('Список проектов не является "list". '
                         'Список проектов является '
-                        f'{type(response.get("homeworks"))}')
+                        f'{type(response.get("projects"))}')
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    if 'current_date' not in response or response['current_date'] != current_date:
+        raise ValueError('Ответ API содержит неверную текущую дату.'
+                         f'Ожидаемая дата: {current_date},'
+                         f'Полученная дата: {response.get("current_date, "None")}')
     logging.info('Проверка ответа API прошла успешно!')
 
 
@@ -114,7 +127,7 @@ def main():
         try:
             response = get_api_answer(timestamp)
             check_response(response)
-            last_work = response['homeworks']
+            last_work = response['projects']
             if last_work:
                 message = parse_status(last_work[0])
                 if last_message != message:
