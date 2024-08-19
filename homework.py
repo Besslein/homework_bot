@@ -8,7 +8,6 @@ from http import HTTPStatus
 import requests
 import telebot
 from dotenv import load_dotenv
-from datetime import datetime
 import json
 
 from exceptions import APIError, TokenNotFound
@@ -73,26 +72,22 @@ def get_api_answer(timestamp):
     try:
         return response.json()
     except json.JSONDecodeError as json_error:
-        raise APIError(f'Ошибка при преобразовании ответа в JSON: {json_error}')
+        raise APIError(f'Ошибка при преобразовании ответа в JSON: 
+                       {json_error}')
 
 
-def check_response(response):
-    """Проверка ответа от API."""
-    logging.info('Начало проверки ответа API')
-    if not isinstance(response, dict):
-        raise TypeError('Ответ API не является "dict". '
-                        f'Ответ API является {type(response)}')
-    if 'projects' not in response:
-        raise KeyError('Ответ API не содержит список проектов "projects"')
-    if not isinstance(response.get('projects'), list):
-        raise TypeError('Список проектов не является "list". '
-                        'Список проектов является '
-                        f'{type(response.get("projects"))}')
-    current_date = datetime.now().strftime('%Y-%m-%d')
-    if 'current_date' not in response or response['current_date'] != current_date:
-        raise ValueError('Ответ API содержит неверную текущую дату.'
-                         f'Ожидаемая дата: {current_date},'
-                         f'Полученная дата: {response.get("current_date", "None")}')
+def check_response(response): 
+    """Проверка ответа от API.""" 
+    logging.info('Начало проверки ответа API') 
+    if not isinstance(response, dict): 
+        raise TypeError('Ответ API не является "dict". ' 
+                        f'Ответ API является {type(response)}') 
+    if 'homeworks' not in response: 
+        raise KeyError('Ответ API не содержит список проектов "homeworks"') 
+    if not isinstance(response.get('homeworks'), list): 
+        raise TypeError('Список проектов не является "list". ' 
+                        'Список проектов является ' 
+                        f'{type(response.get("homeworks"))}') 
     logging.info('Проверка ответа API прошла успешно!')
 
 
