@@ -94,18 +94,18 @@ def check_response(response):
 def parse_status(homework):
     """Проверяется статус домашней работы."""
     logging.info('Начало проверки статуса проекта')
-    homework_name = homework.get('homework_name')
-    homework_status = homework.get('status')
-    if not homework_status:
+    work_name = homework.get('homework_name')
+    work_status = homework.get('status')
+    if not work_status:
         raise KeyError('Не найден статус проекта в ответе API')
-    if not homework_name:
+    if not work_name:
         raise KeyError('Не найдено имя проекта в ответе API')
-    if homework_status not in HOMEWORK_VERDICTS:
+    if work_status not in HOMEWORK_VERDICTS:
         raise ValueError('Не найден статус последнего проекта:'
-                         f' {homework_status}')
-    verdict = HOMEWORK_VERDICTS[homework_status]
+                         f' {work_status}')
+    verdict = HOMEWORK_VERDICTS[work_status]
     logging.info('Проверка статуса проекта успешна!')
-    return f'Изменился статус проверки работы "{homework_name}". {verdict}'
+    return f'Изменился статус проверки работы "{work_name}". {verdict}'
 
 
 def main():
@@ -122,7 +122,7 @@ def main():
         try:
             response = get_api_answer(timestamp)
             check_response(response)
-            last_work = response['projects']
+            last_work = response['homeworks']
             if last_work:
                 message = parse_status(last_work[0])
                 if last_message != message:
