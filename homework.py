@@ -82,20 +82,20 @@ def check_response(response):
     if not isinstance(response, dict):
         raise TypeError('Ответ API не является "dict". '
                         f'Ответ API является {type(response)}')
-    if 'works' not in response:
-        raise KeyError('Ответ API не содержит список проектов "works"')
-    if not isinstance(response.get('works'), list):
+    if 'homeworks' not in response:
+        raise KeyError('Ответ API не содержит список проектов "homeworks"')
+    if not isinstance(response.get('homeworks'), list):
         raise TypeError('Список проектов не является "list". '
                         'Список проектов является '
-                        f'{type(response.get("works"))}')
+                        f'{type(response.get("homeworks"))}')
     logging.info('Проверка ответа API прошла успешно!')
 
 
-def parse_status(homework):
+def parse_status(work):
     """Проверяется статус домашней работы."""
     logging.info('Начало проверки статуса проекта')
-    work_name = homework.get('homework_name')
-    work_status = homework.get('status')
+    work_name = work.get('homework_name')
+    work_status = work.get('status')
     if not work_status:
         raise KeyError('Не найден статус проекта в ответе API')
     if not work_name:
@@ -122,9 +122,9 @@ def main():
         try:
             response = get_api_answer(timestamp)
             check_response(response)
-            last_work = response['works']
-            if last_work:
-                message = parse_status(last_work[0])
+            project_bot = response['homeworks']
+            if project_bot:
+                message = parse_status(project_bot[0])
                 if last_message != message:
                     send_message(bot, message)
                     last_message = message
