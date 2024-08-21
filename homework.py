@@ -122,9 +122,9 @@ def main():
         try:
             response = get_api_answer(timestamp)
             check_response(response)
-            project_bot = response['homeworks']
-            if project_bot:
-                message = parse_status(project_bot[0])
+            homeworks = response['homeworks']
+            if homeworks:
+                message = parse_status(homeworks[0])
                 if last_message != message:
                     send_message(bot, message)
                     last_message = message
